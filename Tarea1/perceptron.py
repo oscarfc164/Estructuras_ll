@@ -1,14 +1,14 @@
 class perceptron:
     def __init__(self, bits_to_index, global_history_size):
         self.bits_to_index = bits_to_index
-        self.size_of_branch_table = 2**bits_to_index
+        self.size_of_perceptrones_table = (2**bits_to_index)
         self.global_history_size = global_history_size
-        self.max_index_global_history = 2**self.global_history_size
-        self.num_preceptrons = 2**(bits_to_index+global_history_size)
-        self.weights = [[0]*(self.global_history_size+1) for i in range(self.num_preceptrons)]
-        self.history = [0]*self.global_history_size
+        self.num_weights = self.global_history_size + 1 #Including the bias 
+        self.perceptrones = [[0]*(self.num_weights) for i in range(self.size_of_perceptrones_table)]
+        self.history = [[-1]*(self.global_history_size) for i in range(self.global_history_size)]
         self.threshold = int(1.93*(self.global_history_size) + 14)
         self.bias = 0
+        self.yout = 0
         #Escriba aquí el init de la clase
         self.total_predictions = 0
         self.total_taken_pred_taken = 0
@@ -16,7 +16,7 @@ class perceptron:
         self.total_not_taken_pred_taken = 0
         self.total_not_taken_pred_not_taken = 0
 
-        print(len(self.weights))
+        print(len(self.perceptrones))
 
     def print_info(self):
         print("Parámetros del predictor:")
@@ -34,42 +34,62 @@ class perceptron:
         print("\t% predicciones correctas:\t\t\t\t"+str(formatted_perc)+"%")
 
     def predict(self, PC):
-        PC_index = int(PC) % self.num_preceptrons
+        #mask = (1<<self.bits_to_index) - 1
+        PC_index = int(PC) & (self.size_of_perceptrones_table - 1)
+        #PC_index = int(PC) % (self.size_of_perceptrones_table-1)
         #print(PC_index)
         
-        self.bias = self.weights[PC_index][0]
-        for i in range(0, self.global_history_size):
-            self.bias += self.history[i]*self.weights[PC_index][i]
+        self.bias = self.perceptrones[PC_index][0]
+        self.yout = self.bias
+        for i in range(1,self.global_history_size+1):
+            if (self.history[i-1] == 1): 
+                self.yout += self.perceptrones[PC_index][i]
+            else:
+                self.yout -= self.perceptrones[PC_index][i]
 
-        if (self.bias >= 0):
-            
+        if (self.yout > 0):
             prediction = "T"
         else: 
             prediction = "N"
-
+        
         return prediction
     
     def train_preceptrons(self, PC, result):
-        PC_index = int(PC) % self.num_preceptrons
-        for i in range(0, self.global_history_size):
-            if (result == "T"):
-                self.weights[PC_index][i] += self.history[i]
-            else: 
-                self.weights[PC_index][i] -= self.history[i]
+        #mask = (1<<self.bits_to_index) - 1
+        PC_index = int(PC) & (self.size_of_perceptrones_table - 1)
+        #PC_index = int(PC) % (self.size_of_perceptrones_table-1)
+        if (result == "T"):
+            t = 1
+        else:
+            t = -1
 
+        for i in range(1, self.global_history_size+1):
+            if (t == self.history[i-1]):
+                self.perceptrones[PC_index][i] += 1
+            else: 
+                self.perceptrones[PC_index][i] -= 1
 
     def update(self, PC, result, prediction):
-        PC_index = int(PC) % self.num_preceptrons
 
-        if((prediction != result) or (abs(self.bias) <= self.threshold)):
+        
+        #if(result == prediction):
+        #    print("No update")
+        #else: print("Need update")
+        #print(self.history)
+
+        if((prediction != result) or (abs(self.yout) <= self.threshold)):
+            #print("going to training")
+            #print(self.yout)
             self.train_preceptrons(PC, result)
 
-            #Update history
-            self.history.pop(0)
-            if(result == "T"):
-                self.history.append(1)
-            else: 
-                self.history.append(0)
+        #Update history
+        #if(prediction != result):
+        self.history.pop(0)
+        if result == "T":
+            self.history.append(1)
+        else:
+            self.history.append(-1)
+            
         #Update stats
         if result == "T" and result == prediction:
             self.total_taken_pred_taken += 1
