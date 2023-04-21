@@ -5,7 +5,7 @@ class perceptron:
         self.global_history_size = global_history_size
         self.num_weights = self.global_history_size + 1 #Including the bias 
         self.perceptrones = [[0]*(self.num_weights) for i in range(self.size_of_perceptrones_table)]
-        self.history = [[-1]*(self.global_history_size) for i in range(self.global_history_size)]
+        self.history = [-1]*(self.global_history_size)
         self.threshold = int(1.93*(self.global_history_size) + 14)
         self.bias = 0
         self.yout = 0
@@ -16,7 +16,8 @@ class perceptron:
         self.total_not_taken_pred_taken = 0
         self.total_not_taken_pred_not_taken = 0
 
-        print(len(self.perceptrones))
+        print(self.history)
+        print(self.perceptrones)
 
     def print_info(self):
         print("Parámetros del predictor:")
