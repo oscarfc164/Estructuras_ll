@@ -17,7 +17,7 @@ if options.branch_predictor_type == "0":
     branch_predictor = perceptron(int(options.bits_to_index),int(options.global_history_size))
     branch_predictor.print_info()
 if options.branch_predictor_type == "1":
-    branch_predictor = ie0521_bp()
+    branch_predictor = ie0521_bp(int(options.bits_to_index),int(options.global_history_size))
     branch_predictor.print_info()
 elif options.branch_predictor_type == "2":
     branch_predictor = bimodal(int(options.bits_to_index))

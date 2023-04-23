@@ -4,7 +4,7 @@ class perceptron:
         self.size_of_perceptrones_table = (2**bits_to_index)
         self.global_history_size = global_history_size
         self.num_weights = self.global_history_size + 1 #Including the bias 
-        self.perceptrones = [[0]*(self.num_weights) for i in range(self.size_of_perceptrones_table)]
+        self.perceptrones = [[0]*(self.num_weights+1) for i in range(self.size_of_perceptrones_table)]
         self.history = [-1]*(self.global_history_size)
         self.threshold = int(1.93*(self.global_history_size) + 14)
         self.bias = 0
@@ -16,8 +16,8 @@ class perceptron:
         self.total_not_taken_pred_taken = 0
         self.total_not_taken_pred_not_taken = 0
 
-        print(self.history)
-        print(self.perceptrones)
+        #print(self.history)
+        #print(self.perceptrones)
 
     def print_info(self):
         print("Parámetros del predictor:")
@@ -64,11 +64,14 @@ class perceptron:
         else:
             t = -1
 
-        for i in range(1, self.global_history_size+1):
-            if (t == self.history[i-1]):
-                self.perceptrones[PC_index][i] += 1
-            else: 
-                self.perceptrones[PC_index][i] -= 1
+        for i in range(0, self.global_history_size+1):
+            if (i == 0):
+                self.perceptrones[PC_index][i] += t
+            else:  
+                if (t == self.history[i-1]):
+                    self.perceptrones[PC_index][i] += 1
+                else: 
+                    self.perceptrones[PC_index][i] -= 1
 
     def update(self, PC, result, prediction):
 
