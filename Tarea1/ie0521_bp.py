@@ -5,15 +5,13 @@ class ie0521_bp:
         self.bits_to_index = bits_to_index
         self.size_of_branch_table = 2**bits_to_index
         self.branch_table = [[0]*self.local_history_size for i in range(self.size_of_branch_table)]
-        self.global_history_size = int(history_size/2)
-        self.global_history_reg = [0]*(self.global_history_size)
         self.total_predictions = 0
         self.total_taken_pred_taken = 0
         self.total_taken_pred_not_taken = 0
         self.total_not_taken_pred_taken = 0
         self.total_not_taken_pred_not_taken = 0
 
-        print(self.branch_table)
+        #print(self.branch_table)
 
     def print_info(self):
         print("Parámetros del predictor:")
@@ -46,47 +44,20 @@ class ie0521_bp:
         else: 
             local_pred = "T"
 
-        n_counter_g = 0
-        t_counter_g = 0
-        for i in range(0, self.global_history_size):
-            if self.global_history_reg[i] == 0:
-                n_counter_g += 1
-            else: 
-                t_counter_g += 1
-
-        if (n_counter_g >= t_counter_g):
-            global_pred = "N"
-        else:
-            global_pred = "T"
-
-        if (global_pred == local_pred):
-            return global_pred
-            
-        elif (global_pred == "T" and local_pred == "N"):
-            return "N"
-        elif (global_pred == "N" and local_pred == "T"):
-            return "T"
-  
-
+        return local_pred
+    
     def update(self, PC, result, prediction):
         PC_index = int(PC) % self.size_of_branch_table
 
-        #print(self.branch_table[PC_index])
         self.branch_table[PC_index].pop(0)
-        self.global_history_reg.pop(0)
         if result == "T": 
             #print("Take")
             self.branch_table[PC_index].append(1)
-            self.global_history_reg.append(1)
-            
-            
+                
         else: 
             #print("No Take")
             self.branch_table[PC_index].append(0)
-            self.global_history_reg.append(0)
             
-        #print(self.branch_table[PC_index])
-        #print(self.global_history_reg)
 
         #Update stats
         if result == "T" and result == prediction:

@@ -1,0 +1,15 @@
+**Estudiante** : Oscar Fallas Cordero 
+**Carnet** : B92861
+
+*Instrucciones de ejecución*
+
+Para perceptron.py:
+    -python branch_predictor.py -n n --bp 0 -g g
+
+Donde n es el numero de bits por indexar y g es el numero de bits de la historia global 
+
+Para ie0521_bp.py: 
+
+    -python3 ie0521_bp.py -n 13 --bp 1 -6
+
+
